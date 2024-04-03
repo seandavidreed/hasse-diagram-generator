@@ -3,7 +3,29 @@ use dialoguer::MultiSelect;
 use std::io;
 use std::io::Write;
 
-pub fn get_set() -> Vec<String> {
+#[derive(Clone)]
+pub struct Element {
+    pub name: String,
+    pub value: u32,
+    pub coord: (u32, u32)
+}
+
+impl Element {
+    pub fn new(elem: String) -> Self {
+        Self {
+            name: elem.clone(),
+            value: elem.trim().parse().expect("Nan"),
+            coord: (0, 0)
+        }
+    }
+}
+
+//pub struct POSet {
+//    pub set: Vec<Element>,
+//    pub relation: Vec<(u32, u32)>
+//}
+
+pub fn get_set() -> Vec<Element> {
     let mut set = Vec::new();
     let mut i = 1;
 
@@ -21,17 +43,17 @@ pub fn get_set() -> Vec<String> {
             break;
         }
 
-        set.push(input);
+        set.push(Element::new(input));
     }
 
     set
 }
 
-pub fn build_relation(set: &Vec<String>) -> Vec<(u32,u32)> { 
+pub fn build_relation(set: &Vec<Element>) -> Vec<(u32,u32)> { 
     let mut pairs = Vec::new();
     for a in 0..set.len() {
         for b in a..set.len() {
-            let pair: String = format!("({}, {})", set[a].trim(), set[b].trim());
+            let pair: String = format!("({}, {})", set[a].value, set[b].value);
             pairs.push(pair);
         }
     }
@@ -58,14 +80,14 @@ pub fn build_relation(set: &Vec<String>) -> Vec<(u32,u32)> {
 }
 
 pub fn find_minimal_elements(
-    set: &Vec<String>, 
+    set: &Vec<Element>, 
     relation: &Vec<(u32,u32)>
-    ) -> Vec<String> {
+    ) -> Vec<Element> {
     // For a minimal element u, if (x,u) in R, then u == x.
-    let mut min_elts: HashMap<u32, String> = HashMap::new();
+    let mut min_elts: HashMap<u32, Element> = HashMap::new();
 
-    for elem in set.iter() {
-        min_elts.insert(elem.trim().parse().expect("NaN"), elem.to_string());
+    for elem in set {
+        min_elts.insert(elem.value, elem.clone()); // Like to find another way besides cloning
     }
 
     for pair in relation {
@@ -74,15 +96,14 @@ pub fn find_minimal_elements(
         }
     }
 
-
+    let mut result = Vec::new();
     print!("Minimal Elements: ");
     print!("{{ ");
-    for value in min_elts.values() {
-        print!("{} ", value.trim());
+    for elem in min_elts.values() {
+        print!("{} ", elem.name.trim());
+        result.push(elem.clone());
     }
     println!("}}");
-
-    let result: Vec<String> = min_elts.values().cloned().collect();
 
     result
 }
