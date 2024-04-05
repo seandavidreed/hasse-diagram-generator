@@ -9,10 +9,11 @@ use crate::set::*;
 fn main() {
 
     // Initialize set with user input.
-    let set: Vec<Element> = get_set();
+    let mut set: Vec<Element> = get_set();
+    set.sort_by(|a, b| a.partial_cmp(b).unwrap());
 
     // Initialize relation with user input.
-    let relation: Vec<(u32,u32)> = build_relation(&set);
+    let relation = Relation::build_from_set(&set);
 
     // Find minimal elements in relation.
     let minimal_elements: Vec<Element> = find_minimal_elements(&set, &relation);
@@ -21,24 +22,11 @@ fn main() {
     let mut img = initialize_blank_image(768, 1024);
 
     // Draw minimal elements vertices.
-    //
     let mut spacing: i32 = 768 / (minimal_elements.len() + 1) as i32;
     for mut elem in minimal_elements {
         draw_vertex(&mut img, spacing, 960, &mut elem);
         spacing += spacing;
     }
-
-    // Keep track of adjacencies and which have yet to be traversed.
-    //let mut adjacency_list: HashMap<String, VecDeque<String>> = HashMap::new();
-    //{    
-    //    for elem in set {
-    //        adjacency_list.insert(elem, VecDeque::new());    
-    //    }
-    //}
-
-    //for pair in relation.iter() {
-    //    adjacency_list.get_mut(String::from(pair.0)).push_back(pair.1);
-    //}
 
     let mut y = 900;
     for mut elem in set {
