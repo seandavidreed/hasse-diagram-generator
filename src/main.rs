@@ -23,13 +23,13 @@ fn main() {
 
     // Draw minimal elements vertices.
     let mut spacing: i32 = 768 / (set.minimal.len() + 1) as i32;
-    for mut elem in set.minimal {
-        draw_vertex(&mut img, spacing, 960, &mut elem);
+    for i in 0.. set.minimal.len() {
+        draw_vertex(&mut img, spacing, 960, &mut set.minimal[i]);
         spacing += spacing;
     }
 
     for i in 0..set.minimal.len() {
-        println!("{:?}", set.minimal[i].name);
+        println!("{:?}", relation.map.get(&set.minimal[i].value));
     }
 
     let mut y = 900;
