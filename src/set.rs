@@ -20,6 +20,66 @@ impl Element {
     }
 }
 
+pub struct ElementVector {
+    pub elements: Vec<Element>,
+    pub minimal: Vec<Element>
+}
+
+impl ElementVector {
+    pub fn new() -> Self {
+        let mut set = Vec::new();
+        let mut i = 1;
+
+        println!("Enter elements in set:");
+
+        loop {
+            let mut input = String::new();
+
+            print!("Enter member {}: ", i);
+            i += 1;
+            io::stdout().flush().expect("Failed to flush.");
+            io::stdin().read_line(&mut input).expect("Need a number.");
+
+            if input == "\n" {
+                break;
+            }
+
+            set.push(Element::new(input));
+        }
+        
+        Self {
+            elements: set,
+            minimal: Vec::new()
+        }
+    }
+
+    pub fn find_minimal_elements(&mut self, relation: &Relation) {
+        // For a minimal element u, if (x,u) in R, then u == x.
+        let mut min_elts = HashMap::new();
+
+        for elem in self.elements.iter() {
+            min_elts.insert(elem.value, elem.clone()); // Like to find another way be
+        }
+
+        for pair in relation.pairs.iter() {
+            if pair.1 != pair.0 {
+                min_elts.remove(&pair.1);
+            }
+        }
+
+        let mut result = Vec::new();
+        print!("Minimal Elements: ");
+        print!("{{ ");
+        for elem in min_elts.values() {
+            print!("{} ", elem.name.trim());
+            result.push(Element::new(elem.name.clone()));
+        }
+        println!("}}");
+        
+        self.minimal = result
+    }
+}
+
 pub struct Relation {
     pub pairs: Vec<(u32,u32)>,
     pub map: HashMap<u32, Vec<u32>>
@@ -62,57 +122,4 @@ impl Relation {
             map: relation_map
         }
     }
-}
-
-pub fn get_set() -> Vec<Element> {
-    let mut set = Vec::new();
-    let mut i = 1;
-
-    println!("Enter elements in set:");
-
-    loop {
-        let mut input = String::new();
-
-        print!("Enter member {}: ", i);
-        i += 1;
-        io::stdout().flush().expect("Failed to flush.");
-        io::stdin().read_line(&mut input).expect("Need a number.");
-
-        if input == "\n" {
-            break;
-        }
-
-        set.push(Element::new(input));
-    }
-
-    set
-}
-
-pub fn find_minimal_elements(
-    set: &Vec<Element>, 
-    relation: &Relation
-    ) -> Vec<Element> {
-    // For a minimal element u, if (x,u) in R, then u == x.
-    let mut min_elts = HashMap::new();
-
-    for elem in set {
-        min_elts.insert(elem.value, elem.clone()); // Like to find another way be
-    }
-
-    for pair in relation.pairs.iter() {
-        if pair.1 != pair.0 {
-            min_elts.remove(&pair.1);
-        }
-    }
-
-    let mut result = Vec::new();
-    print!("Minimal Elements: ");
-    print!("{{ ");
-    for elem in min_elts.values() {
-        print!("{} ", elem.name.trim());
-        result.push(elem.clone());
-    }
-    println!("}}");
-
-    result
 }

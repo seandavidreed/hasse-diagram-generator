@@ -8,28 +8,32 @@ use crate::set::*;
 
 fn main() {
 
-    // Initialize set with user input.
-    let mut set: Vec<Element> = get_set();
-    set.sort_by(|a, b| a.partial_cmp(b).unwrap());
+    // Initialize set vector with user input.
+    let mut set = ElementVector::new();
+    set.elements.sort_by(|a, b| a.partial_cmp(b).unwrap());
 
-    // Initialize relation with user input.
-    let relation = Relation::build_from_set(&set);
+    // Initialize relation struct with user input.
+    let relation = Relation::build_from_set(&set.elements);
 
     // Find minimal elements in relation.
-    let minimal_elements: Vec<Element> = find_minimal_elements(&set, &relation);
+    set.find_minimal_elements(&relation);
 
     // Initialize image.
     let mut img = initialize_blank_image(768, 1024);
 
     // Draw minimal elements vertices.
-    let mut spacing: i32 = 768 / (minimal_elements.len() + 1) as i32;
-    for mut elem in minimal_elements {
+    let mut spacing: i32 = 768 / (set.minimal.len() + 1) as i32;
+    for mut elem in set.minimal {
         draw_vertex(&mut img, spacing, 960, &mut elem);
         spacing += spacing;
     }
 
+    for i in 0..set.minimal.len() {
+        println!("{:?}", set.minimal[i].name);
+    }
+
     let mut y = 900;
-    for mut elem in set {
+    for mut elem in set.elements {
         draw_vertex(&mut img, 384, y, &mut elem);
         y -= 100;
     }
