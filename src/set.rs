@@ -67,19 +67,20 @@ impl Matrix {
         let size = self.num_columns;
         let mut not_minimal = false;
         let mut min_elts = Vec::new();
-        for i in 0..size {
-            for j in 0..size {
-                if i == j {
-                    continue;
+        for col in 0..size {
+            for row in 0..size {
+                if self.get(row, col) == Some(false) && row == col {
+                    not_minimal = true;
+                    break;
                 }
-                if self.get(j, i) == Some(true) {
+                if self.get(row, col) == Some(true) && row != col {
                     not_minimal = true;
                     break;
                 }
             }
 
             if not_minimal == false {
-                min_elts.push(i);
+                min_elts.push(col);
             }
 
             not_minimal = false;
@@ -224,6 +225,10 @@ impl Relation {
             matrix_copy.print();
 
             let min_elts = matrix_copy.find_minimal_elements();
+
+            for elt in min_elts.iter() {
+                println!("{:?}", elt);
+            }
 
             // Build hasse map
             for curr in min_elts.iter() {
