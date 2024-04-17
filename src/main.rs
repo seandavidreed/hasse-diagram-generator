@@ -1,7 +1,7 @@
-//use std::collections::VecDeque;
+mod set_util;
 
-//mod draw;
-//use crate::draw::*;
+mod draw;
+use crate::draw::*;
 
 mod set;
 use crate::set::*;
@@ -12,23 +12,18 @@ fn main() {
     let set = Set::new();
 
     // Initialize relation struct with user input.
-    let mut relation = Relation::build_from_set(&set);
+    let relation = Relation::build_from_set(&set);
 
-    // Find minimal elements in relation.
-    let hasse_map = relation.build_hasse_map();
+    // Initialize image.
+    let mut img = initialize_blank_image(768, 1024);
+
+    // Draw Hasse Diagram.
+    let hasse_map = draw_hasse_diagram(&relation.matrix, &mut img);
 
     for i in hasse_map.iter() {
         println!("{:?}", i);
     }
-    // Initialize image.
-//    let mut img = initialize_blank_image(768, 1024);
 
-    // Draw minimal elements vertices.
-//    let mut spacing: i32 = 768 / (set.minimal.len() + 1) as i32;
-//    for i in 0.. set.minimal.len() {
-//        draw_vertex(&mut img, spacing, 960, &mut set.minimal[i]);
-//        spacing += spacing;
-//    }
 
 //    for i in 0..set.minimal.len() {
 //        println!("{:?}", relation.map.get(&set.minimal[i].value));

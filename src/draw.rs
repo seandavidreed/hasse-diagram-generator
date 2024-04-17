@@ -1,7 +1,8 @@
 use ab_glyph::FontRef;
 use image::{ImageBuffer, Rgb, RgbImage};
 use imageproc::drawing::{draw_hollow_circle_mut, draw_text_mut};
-use crate::set::Element;
+use std::collections::HashMap;
+use crate::set_util::{Element, Matrix};
 
 pub fn initialize_blank_image(width: u32, height: u32) -> ImageBuffer<Rgb<u8>, Vec<u8>> {
     let mut img = RgbImage::new(width, height);
@@ -55,7 +56,36 @@ pub fn draw_vertex(img: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, x: i32, y: i32, elem
     );
 }
 
-//pub fn make_chain(elem: relation: Vec<(u32,u32)>) {
-        
-//}
+pub fn draw_hasse_diagram(matrix: &Matrix, _img: &mut ImageBuffer<Rgb<u8>, Vec<u8>>) -> HashMap<usize, Vec<usize>> {
+    let mut hasse_map = HashMap::new();
+    let mut prev_min_elts = Vec::new();
+    let mut matrix_copy = matrix.clone();
+
+    loop {
+        // TESTING
+        matrix_copy.print();
+
+        // Build hasse map
+        let min_elts = matrix_copy.find_minimal_elements();
+        for curr in min_elts.iter() {
+            hasse_map.insert(*curr, Vec::new());
+            for prev in prev_min_elts.iter() {
+                if matrix.get(*prev, *curr) == Some(true) {
+                    hasse_map.get_mut(curr).expect("Key not in HashMap").push(*prev);
+                }
+            }
+            //draw_vertex(&mut img, spacing, 960, );
+        }
+
+        matrix_copy.remove_minimal_elements(&min_elts);
+        if matrix_copy.is_empty() {
+            break;
+        }
+
+        prev_min_elts = min_elts.clone();
+    }
+
+    hasse_map
+}
+
 
