@@ -1,4 +1,4 @@
-#[derive(Clone, PartialEq, PartialOrd)]
+#[derive(Clone, Eq, Ord, PartialEq, PartialOrd)]
 pub struct Element {
     pub name: String,
     pub value: u32,

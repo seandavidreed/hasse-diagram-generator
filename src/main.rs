@@ -17,23 +17,9 @@ fn main() {
     // Initialize image.
     let mut img = initialize_blank_image(768, 1024);
 
-    // Draw Hasse Diagram.
-    let hasse_map = draw_hasse_diagram(&mut set, &relation.matrix, &mut img);
+    // Draw Hasse Diagram on image.
+    draw_hasse_diagram(&mut set, &relation.matrix, &mut img);
 
-    for i in hasse_map.iter() {
-        println!("{:?}", i);
-    }
-
+    // Save image.
     img.save("test.jpg").expect("Failed to save image.");
-
-
-//    for i in 0..set.minimal.len() {
-//        println!("{:?}", relation.map.get(&set.minimal[i].value));
-//    }
-
-//    let mut y = 900;
-//    for mut elem in set.elements {
-//        draw_vertex(&mut img, 384, y, &mut elem);
-//        y -= 100;
-//    }
 }

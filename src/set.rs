@@ -31,7 +31,7 @@ impl Set {
         }
 
         // Sort set in ascending order
-        set.sort_by(|a, b| a.partial_cmp(b).unwrap());
+        set.sort_by(|a, b| a.value.cmp(&b.value));
 
         // Initialize element indices
         let mut idx = HashMap::new();
@@ -79,14 +79,7 @@ impl Relation {
         // into a vector of tuples and a matrix.
         let mut relation = Vec::new();
         let mut matrix = Matrix::new(set.elements.len());
-        for i in selection {
-//            let pair: Vec<&str> = pairs[i]
-//                .trim_matches(|c| c == '(' || c == ')')
-//                .split(',')
-//                .collect();
-//            let a = pair[0].trim().parse().expect("Failed to parse.");
-//            let b = pair[1].trim().parse().expect("Failed to parse.");
-            
+        for i in selection { 
             let a = set.idx.get(&pair_elements[i].0.value);
             let b = set.idx.get(&pair_elements[i].1.value);
             relation.push((pair_elements[i].0.value, pair_elements[i].1.value));

@@ -57,17 +57,20 @@ pub fn draw_vertex(img: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, x: i32, y: i32, elem
     );
 }
 
-pub fn draw_hasse_diagram(set: &mut Set, matrix: &Matrix, img: &mut ImageBuffer<Rgb<u8>, Vec<u8>>) -> HashMap<usize, Vec<usize>> {
+pub fn draw_hasse_diagram(set: &mut Set, matrix: &Matrix, img: &mut ImageBuffer<Rgb<u8>, Vec<u8>>) {
     let mut hasse_map = HashMap::new();
     let mut prev_min_elts = Vec::new();
     let mut matrix_copy = matrix.clone();
 
+    let mut i = 900;
     loop {
         // TESTING
         matrix_copy.print();
 
         // Build hasse map
         let min_elts = matrix_copy.find_minimal_elements();
+        let mut spacing = (img.width() / (min_elts.len() + 1) as u32) as i32;
+        let increment = spacing;
         for curr in min_elts.iter() {
             hasse_map.insert(*curr, Vec::new());
             for prev in prev_min_elts.iter() {
@@ -75,7 +78,9 @@ pub fn draw_hasse_diagram(set: &mut Set, matrix: &Matrix, img: &mut ImageBuffer<
                     hasse_map.get_mut(curr).expect("Key not in HashMap").push(*prev);
                 }
             }
-            draw_vertex(img, 200 , 960, &mut set.elements[*curr]);
+
+            draw_vertex(img, spacing, i, &mut set.elements[*curr]);
+            spacing += increment;
         }
 
         matrix_copy.remove_minimal_elements(&min_elts);
@@ -84,9 +89,6 @@ pub fn draw_hasse_diagram(set: &mut Set, matrix: &Matrix, img: &mut ImageBuffer<
         }
 
         prev_min_elts = min_elts.clone();
+        i -= 100;
     }
-
-    hasse_map
 }
-
-
