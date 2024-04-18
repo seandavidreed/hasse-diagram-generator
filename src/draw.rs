@@ -2,6 +2,7 @@ use ab_glyph::FontRef;
 use image::{ImageBuffer, Rgb, RgbImage};
 use imageproc::drawing::{draw_hollow_circle_mut, draw_text_mut};
 use std::collections::HashMap;
+use crate::set::{Set};
 use crate::set_util::{Element, Matrix};
 
 pub fn initialize_blank_image(width: u32, height: u32) -> ImageBuffer<Rgb<u8>, Vec<u8>> {
@@ -56,7 +57,7 @@ pub fn draw_vertex(img: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, x: i32, y: i32, elem
     );
 }
 
-pub fn draw_hasse_diagram(matrix: &Matrix, _img: &mut ImageBuffer<Rgb<u8>, Vec<u8>>) -> HashMap<usize, Vec<usize>> {
+pub fn draw_hasse_diagram(set: &mut Set, matrix: &Matrix, img: &mut ImageBuffer<Rgb<u8>, Vec<u8>>) -> HashMap<usize, Vec<usize>> {
     let mut hasse_map = HashMap::new();
     let mut prev_min_elts = Vec::new();
     let mut matrix_copy = matrix.clone();
@@ -74,7 +75,7 @@ pub fn draw_hasse_diagram(matrix: &Matrix, _img: &mut ImageBuffer<Rgb<u8>, Vec<u
                     hasse_map.get_mut(curr).expect("Key not in HashMap").push(*prev);
                 }
             }
-            //draw_vertex(&mut img, spacing, 960, );
+            draw_vertex(img, 200 , 960, &mut set.elements[*curr]);
         }
 
         matrix_copy.remove_minimal_elements(&min_elts);
