@@ -1,6 +1,6 @@
 use ab_glyph::FontRef;
 use image::{ImageBuffer, Rgb, RgbImage};
-use imageproc::drawing::{draw_hollow_circle_mut, draw_text_mut};
+use imageproc::drawing::{draw_hollow_circle_mut, draw_text_mut, draw_line_segment_mut};
 use std::collections::HashMap;
 use crate::set::{Set};
 use crate::set_util::{Element, Matrix};
@@ -80,6 +80,11 @@ pub fn draw_hasse_diagram(set: &mut Set, matrix: &Matrix, img: &mut ImageBuffer<
             }
 
             draw_vertex(img, spacing, i, &mut set.elements[*curr]);
+            for prev in hasse_map.get(curr).expect("KeyValueError") {
+                let curr_coord = (set.elements[*curr].coord.0 as f32, set.elements[*curr].coord.1 as f32);
+                let prev_coord = (set.elements[*prev].coord.0 as f32, set.elements[*prev].coord.1 as f32); 
+                draw_line_segment_mut(img, curr_coord, prev_coord, Rgb([0,0,0]));
+            }
             spacing += increment;
         }
 
