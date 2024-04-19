@@ -39,7 +39,6 @@ impl Matrix {
     }
 
     pub fn set_true(&mut self, row: usize, col: usize) {
-        println!("{:?} {:?}", row, col);
         let index = self.num_columns * row + col;
         self.data[index] = true;
     }
