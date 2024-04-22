@@ -1,16 +1,19 @@
 use ab_glyph::FontRef;
 use image::{ImageBuffer, Rgb, RgbImage};
-use imageproc::drawing::{draw_hollow_circle_mut, draw_text_mut, draw_line_segment_mut};
-use std::collections::HashMap;
+use imageproc::drawing::{draw_filled_circle_mut, draw_text_mut, draw_line_segment_mut};
 use crate::set::{Set};
 use crate::set_util::{Element, Matrix};
 
+static BG_COLOR: Rgb<u8> = Rgb([255,255,255]);
+static TEXT_COLOR: Rgb<u8> = Rgb([255,255,255]);
+static LINE_COLOR: Rgb<u8> = Rgb([0,0,0]);
+static VERTEX_COLOR: Rgb<u8> = Rgb([0,0,0]);
+
 pub fn initialize_blank_image(width: u32, height: u32) -> ImageBuffer<Rgb<u8>, Vec<u8>> {
     let mut img = RgbImage::new(width, height);
-    let color = Rgb([255,255,255]);
     for x in 0..width {
         for y in 0..height {
-            img.put_pixel(x, y, color);
+            img.put_pixel(x, y, BG_COLOR);
         }
     }
 
@@ -40,15 +43,12 @@ pub fn draw_vertex(img: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, x: i32, y: i32, elem
     }
 
     // Draw vertex circle
-    draw_hollow_circle_mut(img, (x, y), 30, Rgb([0,0,0]));
-
-    // Update Element coordinates
-    elem.coord = (x as u32, y as u32); // Need to find out how to stop doing so much type casting
+    draw_filled_circle_mut(img, (x, y), 30, VERTEX_COLOR);
 
     // Draw text inside vertex circle
     draw_text_mut(
         img,
-        Rgb([0,0,0]),
+        TEXT_COLOR,
         x - (24 / offset),
         y - (24 / 2),
         quotient as f32,
@@ -58,7 +58,6 @@ pub fn draw_vertex(img: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, x: i32, y: i32, elem
 }
 
 pub fn draw_hasse_diagram(set: &mut Set, matrix: &Matrix, img: &mut ImageBuffer<Rgb<u8>, Vec<u8>>) {
-    let mut hasse_map = HashMap::new();
     let mut prev_min_elts = Vec::new();
     let mut matrix_copy = matrix.clone();
 
@@ -72,19 +71,18 @@ pub fn draw_hasse_diagram(set: &mut Set, matrix: &Matrix, img: &mut ImageBuffer<
         let mut spacing = (img.width() / (min_elts.len() + 1) as u32) as i32;
         let increment = spacing;
         for curr in min_elts.iter() {
-            hasse_map.insert(*curr, Vec::new());
+            // Write coordinates to element
+            set.elements[*curr].coord = (spacing as u32, i as u32);
+
             for prev in prev_min_elts.iter() {
                 if matrix.get(*prev, *curr) == Some(true) {
-                    hasse_map.get_mut(curr).expect("Key not in HashMap").push(*prev);
+                    let curr_coord = (set.elements[*curr].coord.0 as f32, set.elements[*curr].coord.1 as f32);
+                    let prev_coord = (set.elements[*prev].coord.0 as f32, set.elements[*prev].coord.1 as f32);
+                    draw_line_segment_mut(img, curr_coord, prev_coord, LINE_COLOR);
                 }
             }
 
             draw_vertex(img, spacing, i, &mut set.elements[*curr]);
-            for prev in hasse_map.get(curr).expect("KeyValueError") {
-                let curr_coord = (set.elements[*curr].coord.0 as f32, set.elements[*curr].coord.1 as f32);
-                let prev_coord = (set.elements[*prev].coord.0 as f32, set.elements[*prev].coord.1 as f32); 
-                draw_line_segment_mut(img, curr_coord, prev_coord, Rgb([0,0,0]));
-            }
             spacing += increment;
         }
 
