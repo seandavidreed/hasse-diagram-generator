@@ -5,7 +5,7 @@ use crate::set::{Set};
 use crate::set_util::{Element, Matrix};
 
 static BG_COLOR: Rgb<u8> = Rgb([255,255,255]);
-static TEXT_COLOR: Rgb<u8> = Rgb([255,255,255]);
+static TEXT_COLOR: Rgb<u8> = Rgb([150,150,150]);
 static LINE_COLOR: Rgb<u8> = Rgb([0,0,0]);
 static VERTEX_COLOR: Rgb<u8> = Rgb([0,0,0]);
 
@@ -30,27 +30,23 @@ pub fn draw_vertex(img: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, x: i32, y: i32, elem
     // Find the number of digits of elem
     let mut quotient: u32 = elem.value;
 
-    let mut offset: i32 = 4;
-
     if quotient / 100 != 0 {
-        quotient = 20;
-        offset = 1;
+        quotient = 12;
     } else if quotient / 10 != 0 {
-        quotient = 25;
-        offset = 2;
+        quotient = 17;
     } else {
-        quotient = 30;
+        quotient = 22;
     }
 
     // Draw vertex circle
-    draw_filled_circle_mut(img, (x, y), 30, VERTEX_COLOR);
+    draw_filled_circle_mut(img, (x, y), 10, VERTEX_COLOR);
 
     // Draw text inside vertex circle
     draw_text_mut(
         img,
         TEXT_COLOR,
-        x - (24 / offset),
-        y - (24 / 2),
+        x + 20,
+        y - 12,
         quotient as f32,
         &font,
         &elem.name.trim(),
