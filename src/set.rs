@@ -60,7 +60,11 @@ impl Relation {
         for a in 0..set.elements.len() {
             for b in a..set.elements.len() {
                 let pair: String = format!("({}, {})", set.elements[a].value, set.elements[b].value);
-                pair_strings.push(pair);
+                if set.elements[a].value == set.elements[b].value {
+                    pair_strings.push((pair, true));
+                } else {
+                    pair_strings.push((pair, false));
+                }
  
                 let pair: (Element, Element) = (set.elements[a].clone(), set.elements[b].clone());
                 pair_elements.push(pair);
@@ -71,7 +75,7 @@ impl Relation {
         // in the relation.
         let selection = MultiSelect::new()
             .with_prompt("Build the relation")
-            .items(&pair_strings)
+            .items_checked(&pair_strings)
             .interact()
             .unwrap();
 
@@ -79,7 +83,8 @@ impl Relation {
         // into a vector of tuples and a matrix.
         let mut relation = Vec::new();
         let mut matrix = Matrix::new(set.elements.len());
-        for i in selection { 
+        for i in selection {
+            println!("{} {}", pair_elements[i].0.value, pair_elements[i].1.value);
             let a = set.idx.get(&pair_elements[i].0.value);
             let b = set.idx.get(&pair_elements[i].1.value);
             relation.push((pair_elements[i].0.value, pair_elements[i].1.value));
