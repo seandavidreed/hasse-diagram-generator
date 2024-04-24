@@ -88,6 +88,6 @@ pub fn draw_hasse_diagram(set: &mut Set, matrix: &Matrix, img: &mut ImageBuffer<
         }
 
         prev_min_elts = min_elts.clone();
-        i -= 100;
+        i -= 150;
     }
 }
