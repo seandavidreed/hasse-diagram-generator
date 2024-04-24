@@ -1,8 +1,8 @@
-#[derive(Clone, Eq, Ord, PartialEq, PartialOrd)]
+#[derive(Clone, PartialEq, PartialOrd)]
 pub struct Element {
     pub name: String,
     pub value: u32,
-    pub coord: (u32, u32)
+    pub coord: (f32, f32)
 }
 
 impl Element {
@@ -10,7 +10,7 @@ impl Element {
         Self {
             name: elem.clone(),
             value: elem.trim().parse().expect("NaN"),
-            coord: (0, 0)
+            coord: (0.0, 0.0)
         }
     }
 }

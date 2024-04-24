@@ -56,29 +56,31 @@ pub fn draw_vertex(img: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, x: i32, y: i32, elem
 pub fn draw_hasse_diagram(set: &mut Set, matrix: &Matrix, img: &mut ImageBuffer<Rgb<u8>, Vec<u8>>) {
     let mut prev_min_elts = Vec::new();
     let mut matrix_copy = matrix.clone();
-
-    let mut i = 900;
+    let mut layer = 950;
     loop {
         // TESTING
         matrix_copy.print();
 
-        // Build hasse map
+        // Draw layer of hasse diagram and make connections to previous layer
         let min_elts = matrix_copy.find_minimal_elements();
-        let mut spacing = (img.width() / (min_elts.len() + 1) as u32) as i32;
+        let mut spacing = img.width() / (min_elts.len() + 1) as u32;
         let increment = spacing;
         for curr in min_elts.iter() {
             // Write coordinates to element
-            set.elements[*curr].coord = (spacing as u32, i as u32);
+            set.elements[*curr].coord = (spacing as f32, layer as f32);
 
             for prev in prev_min_elts.iter() {
                 if matrix.get(*prev, *curr) == Some(true) {
-                    let curr_coord = (set.elements[*curr].coord.0 as f32, set.elements[*curr].coord.1 as f32);
-                    let prev_coord = (set.elements[*prev].coord.0 as f32, set.elements[*prev].coord.1 as f32);
-                    draw_line_segment_mut(img, curr_coord, prev_coord, LINE_COLOR);
+                    draw_line_segment_mut(
+                        img,
+                        set.elements[*curr].coord,
+                        set.elements[*prev].coord,
+                        LINE_COLOR
+                    );
                 }
             }
 
-            draw_vertex(img, spacing, i, &mut set.elements[*curr]);
+            draw_vertex(img, spacing as i32, layer, &mut set.elements[*curr]);
             spacing += increment;
         }
 
@@ -88,6 +90,6 @@ pub fn draw_hasse_diagram(set: &mut Set, matrix: &Matrix, img: &mut ImageBuffer<
         }
 
         prev_min_elts = min_elts.clone();
-        i -= 150;
+        layer -= 100;
     }
 }
