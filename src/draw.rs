@@ -86,29 +86,18 @@ pub fn draw_hasse_diagram(set: &mut Set, matrix: &mut Matrix, img: &mut ImageBuf
         matrix_copy.print();
         let next_min_elts = matrix_copy.extract_minimal_elements();
         for curr in min_elts.iter() {
-            for next in next_min_elts.iter() {
-                if matrix.get(*curr, *next) == Some(true) {
+            for next in 0..matrix.size() {
+                if matrix.get(*curr, next) == Some(true) {
                     draw_line_segment_mut(
                         img,
                         set.elements[*curr].coord,
-                        set.elements[*next].coord,
-                        LINE_COLOR
-                    );
-                }
-            }
-
-            let next_next_min_elts = matrix_copy.find_minimal_elements();
-            for next_next in next_next_min_elts.iter() {
-                if matrix.get(*curr, *next_next) == Some(true) {
-                    draw_line_segment_mut(
-                        img,
-                        set.elements[*curr].coord,
-                        set.elements[*next_next].coord,
+                        set.elements[next].coord,
                         LINE_COLOR
                     );
                 }
             }
         }
+
         if matrix_copy.is_empty() {
             break;
         }

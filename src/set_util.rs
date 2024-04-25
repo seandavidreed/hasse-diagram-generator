@@ -29,6 +29,10 @@ impl Matrix {
         }
     }
 
+    pub fn size(&self) -> usize {
+        self.num_columns
+    }
+
     pub fn get(&self, row: usize, col: usize) -> Option<bool> {
         if col >= self.num_columns {
             return None;
