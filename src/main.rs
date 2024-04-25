@@ -12,13 +12,13 @@ fn main() {
     let mut set = Set::new();
 
     // Initialize relation struct with user input.
-    let relation = Relation::build_from_set(&set);
+    let mut relation = Relation::build_from_set(&set);
 
     // Initialize image.
     let mut img = initialize_blank_image(768, 1024);
 
     // Draw Hasse Diagram on image.
-    draw_hasse_diagram(&mut set, &relation.matrix, &mut img);
+    draw_hasse_diagram(&mut set, &mut relation.matrix, &mut img);
 
     // Save image.
     img.save("test.jpg").expect("Failed to save image.");

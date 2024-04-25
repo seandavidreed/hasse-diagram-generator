@@ -83,6 +83,12 @@ impl Matrix {
         min_elts
     }
 
+    pub fn extract_minimal_elements(&mut self) ->Vec<usize> {
+        let min_elts = self.find_minimal_elements();
+        self.remove_minimal_elements(&min_elts);
+        min_elts
+    }
+
     pub fn is_empty(&self) -> bool {
         for i in 0..self.num_columns {
             for j in 0..self.num_columns {
@@ -94,6 +100,21 @@ impl Matrix {
         }
 
         true
+    }
+
+    pub fn remove_transitivity(&mut self) {
+        for row in 0..self.num_columns {            
+            for col in (row+1..self.num_columns).rev() {
+                if self.get(row, col) == Some(true) {
+                    for c in row+1..col {
+                        if self.get(row, c) == Some(true) && self.get(c, col) == Some(true) {
+                            self.set_false(row, col);
+                            break;
+                        }
+                    }
+                }    
+            }
+        }
     }
 
     pub fn print(&self) {

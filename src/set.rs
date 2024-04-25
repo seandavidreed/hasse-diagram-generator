@@ -114,6 +114,8 @@ impl Relation {
             matrix.set_true(*a.unwrap(), *b.unwrap()); 
         }
 
+        matrix.remove_transitivity();
+
         Self {
             pairs: relation,
             matrix: matrix

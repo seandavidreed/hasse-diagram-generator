@@ -53,43 +53,65 @@ pub fn draw_vertex(img: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, x: i32, y: i32, elem
     );
 }
 
-pub fn draw_hasse_diagram(set: &mut Set, matrix: &Matrix, img: &mut ImageBuffer<Rgb<u8>, Vec<u8>>) {
-    let mut prev_min_elts = Vec::new();
+pub fn draw_hasse_diagram(set: &mut Set, matrix: &mut Matrix, img: &mut ImageBuffer<Rgb<u8>, Vec<u8>>) {
+    // Draw vertices and write coordinates to elements.
     let mut matrix_copy = matrix.clone();
     let mut layer = 950;
     loop {
-        // TESTING
-        matrix_copy.print();
-
-        // Draw layer of hasse diagram and make connections to previous layer
-        let min_elts = matrix_copy.find_minimal_elements();
+        let min_elts = matrix_copy.extract_minimal_elements();
         let mut spacing = img.width() / (min_elts.len() + 1) as u32;
         let increment = spacing;
-        for curr in min_elts.iter() {
+        for min_elt in min_elts.iter() {
             // Write coordinates to element
-            set.elements[*curr].coord = (spacing as f32, layer as f32);
+            set.elements[*min_elt].coord = (spacing as f32, layer as f32);
+            draw_vertex(img, spacing as i32, layer, &mut set.elements[*min_elt]);
+            spacing += increment;
+        }
 
-            for prev in prev_min_elts.iter() {
-                if matrix.get(*prev, *curr) == Some(true) {
+        if matrix_copy.is_empty() {
+            break;
+        }
+        layer -= 100;
+    }
+
+    // Draw edges with coordinates in elements.
+    matrix_copy = matrix.clone();
+    
+    // TESTING
+    matrix_copy.print();
+
+    let mut min_elts = matrix_copy.extract_minimal_elements();
+    loop {
+        // TESTING
+        matrix_copy.print();
+        let next_min_elts = matrix_copy.extract_minimal_elements();
+        for curr in min_elts.iter() {
+            for next in next_min_elts.iter() {
+                if matrix.get(*curr, *next) == Some(true) {
                     draw_line_segment_mut(
                         img,
                         set.elements[*curr].coord,
-                        set.elements[*prev].coord,
+                        set.elements[*next].coord,
                         LINE_COLOR
                     );
                 }
             }
 
-            draw_vertex(img, spacing as i32, layer, &mut set.elements[*curr]);
-            spacing += increment;
+            let next_next_min_elts = matrix_copy.find_minimal_elements();
+            for next_next in next_next_min_elts.iter() {
+                if matrix.get(*curr, *next_next) == Some(true) {
+                    draw_line_segment_mut(
+                        img,
+                        set.elements[*curr].coord,
+                        set.elements[*next_next].coord,
+                        LINE_COLOR
+                    );
+                }
+            }
         }
-
-        matrix_copy.remove_minimal_elements(&min_elts);
         if matrix_copy.is_empty() {
             break;
         }
-
-        prev_min_elts = min_elts.clone();
-        layer -= 100;
+        min_elts = next_min_elts;
     }
 }
