@@ -5,9 +5,9 @@ use crate::set::{Set};
 use crate::set_util::{Element, Matrix};
 
 static BG_COLOR: Rgb<u8> = Rgb([255,255,255]);
-static TEXT_COLOR: Rgb<u8> = Rgb([150,150,150]);
-static LINE_COLOR: Rgb<u8> = Rgb([0,0,0]);
-static VERTEX_COLOR: Rgb<u8> = Rgb([0,0,0]);
+static TEXT_COLOR: Rgb<u8> = Rgb([0,0,0]);
+static LINE_COLOR: Rgb<u8> = Rgb([150,150,150]);
+static VERTEX_COLOR: Rgb<u8> = Rgb([150,150,150]);
 
 pub fn initialize_blank_image(width: u32, height: u32) -> ImageBuffer<Rgb<u8>, Vec<u8>> {
     let mut img = RgbImage::new(width, height);
@@ -77,14 +77,10 @@ pub fn draw_hasse_diagram(set: &mut Set, matrix: &mut Matrix, img: &mut ImageBuf
     // Draw edges with coordinates in elements.
     matrix_copy = matrix.clone();
     
-    // TESTING
-    matrix_copy.print();
-
-    let mut min_elts = matrix_copy.extract_minimal_elements();
     loop {
         // TESTING
         matrix_copy.print();
-        let next_min_elts = matrix_copy.extract_minimal_elements();
+        let min_elts = matrix_copy.extract_minimal_elements();
         for curr in min_elts.iter() {
             for next in 0..matrix.size() {
                 if matrix.get(*curr, next) == Some(true) {
@@ -101,6 +97,5 @@ pub fn draw_hasse_diagram(set: &mut Set, matrix: &mut Matrix, img: &mut ImageBuf
         if matrix_copy.is_empty() {
             break;
         }
-        min_elts = next_min_elts;
     }
 }
