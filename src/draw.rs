@@ -23,7 +23,7 @@ pub fn initialize_blank_image(width: u32, height: u32) -> ImageBuffer<Rgb<u8>, V
 pub fn draw_vertex(img: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, x: i32, y: i32, elem: &mut Element) {
     // Designate font
     let font = FontRef::try_from_slice(
-        include_bytes!("/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf")
+        include_bytes!("fonts/FreeMonoBold.ttf")
     )
     .expect("Failed loading font");
 
